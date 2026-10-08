@@ -69,6 +69,9 @@ pub struct Settings {
     pub time_projects: BTreeMap<String, TimeProject>,
     /// Currency code the hourly rates are in ("USD", "EUR", "INR"…).
     pub time_currency: String,
+    /// TradeVault pill: alert when an account's P&L today falls to minus this
+    /// (in that account's currency). 0 = no alert.
+    pub tradevault_loss_limit: f64,
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
@@ -132,6 +135,7 @@ impl Default for Settings {
             desktop_mochi: DesktopMochiPref::default(),
             time_projects: BTreeMap::new(),
             time_currency: "USD".into(),
+            tradevault_loss_limit: 0.0,
         }
     }
 }
@@ -408,7 +412,8 @@ mod tests {
   "language": "pt-BR",
   "desktopMochi": { "onDesktop": true, "spot": { "x": 1500.5, "y": -300.0, "space": "screen" } },
   "timeProjects": { "/code/acme": { "client": "Acme", "rate": 90.0 } },
-  "timeCurrency": "EUR"
+  "timeCurrency": "EUR",
+  "tradevaultLossLimit": 500.0
 }"#;
 
     fn custom() -> Value {
@@ -795,6 +800,7 @@ mod tests {
                 "desktopMochi",
                 "timeProjects",
                 "timeCurrency",
+                "tradevaultLossLimit",
             ]
         );
         let _ = std::fs::remove_dir_all(&dir);

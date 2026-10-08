@@ -41,7 +41,9 @@ test("the catalog holds the Mac's pills, in the Mac's order, with the Mac's valu
     ["integration_music", "Apple Music", "#FA2D48", "service", "Integration"],
   ];
   assert.deepEqual(
-    PILL_CATALOG.map((p) => [p.id, p.name, p.color, p.category, p.subtitle]),
+    // TradeVault is this fork's own pill; the Mac has no such service.
+    PILL_CATALOG.filter((p) => p.id !== "integration_tradevault")
+      .map((p) => [p.id, p.name, p.color, p.category, p.subtitle]),
     mac,
   );
   assert.deepEqual(PILL_CATEGORIES.map((c) => c.title), [

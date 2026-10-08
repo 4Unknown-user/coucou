@@ -71,7 +71,8 @@ pub fn start(app: AppHandle) {
     spawn(app.clone(), "integration_github", 7, 300, poll_github);
     spawn_github_loops(app.clone());
     spawn(app.clone(), "integration_calcom", 8, 300, poll_calcom);
-    spawn(app, "integration_notion", 9, 300, poll_notion);
+    spawn(app.clone(), "integration_notion", 9, 300, poll_notion);
+    spawn(app, "integration_tradevault", 10, 60, poll_tradevault);
 }
 
 /// True when the user has this integration switched on in settings.
@@ -120,6 +121,7 @@ pub async fn poll_once(app: AppHandle, id: &str) {
         "integration_resend" => poll_resend(app).await,
         "integration_notion" => poll_notion(app).await,
         "integration_calcom" => poll_calcom(app).await,
+        "integration_tradevault" => poll_tradevault(app).await,
         _ => {}
     }
 }
@@ -148,6 +150,50 @@ fn status_error(code: u16, unauthorised_hint: &str) -> String {
         403 => unauthorised_hint.to_string(),
         _ => crate::i18n::tf("API error {code}", &[("code", &code.to_string())]),
     }
+}
+
+// ── TradeVault ────────────────────────────────────────────────────────────────
+//
+// The user's own trading journal (Next.js + Supabase). Its /api/coucou/summary
+// returns one summary per account, computed by TradeVault itself — Coucou only
+// shows the numbers; the loss-limit alert is decided in the island
+// (src/core/tradevault.ts).
+
+const TRADEVAULT: &str = "integration_tradevault";
+
+async fn poll_tradevault(app: AppHandle) {
+    let (Some(token), Some(raw)) = (secrets::get("tradevault-token"), secrets::get("tradevault-url")) else {
+        return;
+    };
+    let fail = |error: String| IntegrationUpdate { id: TRADEVAULT, data: json!({}), error: Some(error), event: None };
+    let base = match crate::net::normalise_server_url(&raw) {
+        Ok(url) => url,
+        Err(e) => return emit(&app, fail(e)),
+    };
+    // The token never travels in clear text to another machine.
+    if base.scheme() != "https" && !crate::net::is_loopback_url(&base) {
+        return emit(&app, fail(crate::i18n::t("A key is only sent over https, or to a server on this computer.")));
+    }
+    // TradeVault may run in another time zone: "today" is ours.
+    let now = crate::platform::local_time();
+    let url = format!(
+        "{}?date={:04}-{:02}-{:02}",
+        crate::net::join(&base, "api/coucou/summary"),
+        now.year, now.month, now.day
+    );
+    let response = client().get(&url).bearer_auth(&token).header("Accept", "application/json").send().await;
+    let Ok(response) = response else {
+        return emit(&app, fail(crate::i18n::t("TradeVault is unreachable")));
+    };
+    if !response.status().is_success() {
+        let code = response.status().as_u16();
+        log::line(format!("tradevault HTTP {code}"));
+        return emit(&app, fail(status_error(code, &crate::i18n::t("Key lacks access"))));
+    }
+    let Ok(data) = response.json::<Value>().await else {
+        return emit(&app, fail(crate::i18n::t("TradeVault is unreachable")));
+    };
+    emit(&app, IntegrationUpdate { id: TRADEVAULT, data, error: None, event: None });
 }
 
 // ── Stripe ────────────────────────────────────────────────────────────────────

@@ -4,6 +4,7 @@
 // Cal.com is the one simplification: macOS shows a three-level calendar
 // (month → day → booking); here it is the list of upcoming bookings.
 
+import { TRADEVAULT, formatMoney, readSummary } from "../core/tradevault";
 import { h, svg, clear, dot } from "./dom";
 import { ICONS } from "./icons";
 import { State, type AgentTask } from "../core/state";
@@ -241,6 +242,26 @@ function resendCard(): HTMLElement {
   return h("div", { class: "int-card" }, header("#22C55E", "Resend", t("Emails"), extra), rows);
 }
 
+// ── TradeVault ────────────────────────────────────────────────────────────────
+
+/** One row per account: today's P&L (signed, never colour alone), then streak and drawdown. */
+function tradevaultCard(): HTMLElement {
+  const summary = readSummary(get(TRADEVAULT));
+  const rows = h("div", { class: "int-rows" });
+  (summary?.accounts ?? []).slice(0, 3).forEach((a, i) => {
+    const accent = a.todayPnl < 0 ? "#F4505E" : a.todayPnl > 0 ? "#22C55E" : "#8E939C";
+    // The name and today's P&L always fit; only the risk note may be cut short.
+    const risk: string[] = [];
+    if (a.currentStreak <= -2) risk.push(t("{n} losses in a row", { n: -a.currentStreak }));
+    if (a.currentDrawdown > 0) risk.push(t("Drawdown {amount}", { amount: formatMoney(-a.currentDrawdown, a.currency) }));
+    const cells: Node[] = [h("span", { class: "int-name", style: "flex:0 0 auto", text: a.name })];
+    if (risk.length) cells.push(h("span", { class: "int-sub", text: risk.join(" · ") }));
+    cells.push(h("span", { class: "int-amount", text: formatMoney(a.todayPnl, a.currency, true) }));
+    rows.append(listRow(accent, i === 0, ...cells));
+  });
+  return h("div", { class: "int-card" }, header("#5E6AD2", "TradeVault", t("Today")), rows);
+}
+
 // ── GitHub ────────────────────────────────────────────────────────────────────
 
 function statRow(icon: string, color: string, label: string, value: string): HTMLElement {
@@ -440,6 +461,8 @@ export function hasIntegrationData(id: string): boolean {
       return arr(id, "pages").length > 0;
     case "integration_calcom":
       return info.loaded;
+    case TRADEVAULT:
+      return (readSummary(get(id))?.accounts.length ?? 0) > 0;
     default:
       return false;
   }
@@ -479,6 +502,8 @@ export function renderIntegrationCard(task: AgentTask, hooks: IntegrationCardHoo
       return notionCard();
     case "integration_calcom":
       return calcomCard();
+    case TRADEVAULT:
+      return tradevaultCard();
     default:
       return idleCard(task, hooks.openSettings);
   }

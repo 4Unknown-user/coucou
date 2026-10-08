@@ -4,6 +4,7 @@
 
 import { onEvent, Bridge, type IntegrationUpdate } from "../core/bridge";
 import { gitHubAlert, type GitHubEvent } from "../core/github";
+import { TRADEVAULT, readSummary, tradevaultAlert } from "../core/tradevault";
 import { availablePills } from "../core/pills";
 import { Sound } from "../core/sound";
 import { State } from "../core/state";
@@ -101,7 +102,13 @@ function handle(island: Island, update: IntegrationUpdate) {
     configured: previous?.configured ?? true,
   };
 
-  const event = update.event;
+  let event = update.event;
+  // TradeVault sends numbers only; whether they warrant an alert is decided here.
+  if (update.id === TRADEVAULT && !update.error) {
+    const next = readSummary(update.data);
+    const alert = next && tradevaultAlert(readSummary(previous?.data), next, State.settings.tradevaultLossLimit);
+    if (alert) event = { success: false, label: alert.label, detail: alert.detail };
+  }
   if (event) {
     const task = State.tasks.find((t) => t.id === update.id);
     if (task) {

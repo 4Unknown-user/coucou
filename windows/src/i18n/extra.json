@@ -3580,6 +3580,116 @@
    "pt-BR": "As sessões de agentes são contadas por projeto (sua pasta Git), somente neste PC. Pausas de mais de 15 minutos não contam.",
    "ru": "Сеансы агентов учитываются по проектам (их папке Git) и только на этом ПК. Паузы дольше 15 минут не считаются.",
    "id": "Sesi agen dihitung per proyek (folder Git-nya), hanya di PC ini. Jeda lebih dari 15 menit tidak dihitung."
+  },
+  "Daily loss limit reached": {
+   "zh-Hans": "已达每日亏损上限",
+   "hi": "दैनिक हानि सीमा पहुँच गई",
+   "es": "Límite de pérdida diaria alcanzado",
+   "ar": "تم بلوغ حد الخسارة اليومية",
+   "fr": "Limite de perte journalière atteinte",
+   "bn": "দৈনিক ক্ষতির সীমায় পৌঁছেছে",
+   "pt-BR": "Limite de perda diária atingido",
+   "ru": "Достигнут дневной лимит убытка",
+   "id": "Batas kerugian harian tercapai"
+  },
+  "{n} losses in a row": {
+   "zh-Hans": "连续亏损 {n} 次",
+   "hi": "लगातार {n} नुकसान",
+   "es": "{n} pérdidas seguidas",
+   "ar": "{n} خسائر متتالية",
+   "fr": "{n} pertes d'affilée",
+   "bn": "টানা {n}টি ক্ষতি",
+   "pt-BR": "{n} perdas seguidas",
+   "ru": "{n} убытков подряд",
+   "id": "{n} kerugian berturut-turut"
+  },
+  "Address": {
+   "zh-Hans": "地址",
+   "hi": "पता",
+   "es": "Dirección",
+   "ar": "العنوان",
+   "fr": "Adresse",
+   "bn": "ঠিকানা",
+   "pt-BR": "Endereço",
+   "ru": "Адрес",
+   "id": "Alamat"
+  },
+  "Create the token in TradeVault → Settings → Coucou desktop. http:// only works for a TradeVault running on this computer.": {
+   "zh-Hans": "在 TradeVault → 设置 → Coucou desktop 中创建令牌。http:// 仅适用于在本机运行的 TradeVault。",
+   "hi": "टोकन TradeVault → Settings → Coucou desktop में बनाएँ। http:// केवल इसी कंप्यूटर पर चल रहे TradeVault के लिए काम करता है।",
+   "es": "Crea el token en TradeVault → Ajustes → Coucou desktop. http:// solo funciona con un TradeVault que se ejecute en este equipo.",
+   "ar": "أنشئ الرمز في TradeVault ← الإعدادات ← Coucou desktop. لا يعمل http:// إلا مع TradeVault يعمل على هذا الحاسوب.",
+   "fr": "Créez le jeton dans TradeVault → Réglages → Coucou desktop. http:// ne fonctionne qu'avec un TradeVault qui tourne sur cet ordinateur.",
+   "bn": "TradeVault → Settings → Coucou desktop-এ টোকেন তৈরি করুন। http:// শুধু এই কম্পিউটারে চলা TradeVault-এর জন্য কাজ করে।",
+   "pt-BR": "Crie o token em TradeVault → Configurações → Coucou desktop. http:// só funciona com um TradeVault rodando neste computador.",
+   "ru": "Создайте токен в TradeVault → Настройки → Coucou desktop. http:// работает только с TradeVault, запущенным на этом компьютере.",
+   "id": "Buat token di TradeVault → Pengaturan → Coucou desktop. http:// hanya berfungsi untuk TradeVault yang berjalan di komputer ini."
+  },
+  "Off": {
+   "zh-Hans": "关闭",
+   "hi": "बंद",
+   "es": "Desactivado",
+   "ar": "إيقاف",
+   "fr": "Désactivé",
+   "bn": "বন্ধ",
+   "pt-BR": "Desligado",
+   "ru": "Выкл.",
+   "id": "Mati"
+  },
+  "Daily loss alert": {
+   "zh-Hans": "每日亏损提醒",
+   "hi": "दैनिक हानि अलर्ट",
+   "es": "Alerta de pérdida diaria",
+   "ar": "تنبيه الخسارة اليومية",
+   "fr": "Alerte de perte journalière",
+   "bn": "দৈনিক ক্ষতির সতর্কতা",
+   "pt-BR": "Alerta de perda diária",
+   "ru": "Оповещение о дневном убытке",
+   "id": "Peringatan kerugian harian"
+  },
+  "in the account's currency": {
+   "zh-Hans": "以账户货币计",
+   "hi": "खाते की मुद्रा में",
+   "es": "en la moneda de la cuenta",
+   "ar": "بعملة الحساب",
+   "fr": "dans la devise du compte",
+   "bn": "অ্যাকাউন্টের মুদ্রায়",
+   "pt-BR": "na moeda da conta",
+   "ru": "в валюте счёта",
+   "id": "dalam mata uang akun"
+  },
+  "Drawdown {amount}": {
+   "zh-Hans": "回撤 {amount}",
+   "hi": "ड्रॉडाउन {amount}",
+   "es": "Drawdown {amount}",
+   "ar": "التراجع {amount}",
+   "fr": "Drawdown {amount}",
+   "bn": "ড্রডাউন {amount}",
+   "pt-BR": "Drawdown {amount}",
+   "ru": "Просадка {amount}",
+   "id": "Drawdown {amount}"
+  },
+  "Today": {
+   "zh-Hans": "今天",
+   "hi": "आज",
+   "es": "Hoy",
+   "ar": "اليوم",
+   "fr": "Aujourd'hui",
+   "bn": "আজ",
+   "pt-BR": "Hoje",
+   "ru": "Сегодня",
+   "id": "Hari ini"
+  },
+  "TradeVault is unreachable": {
+   "zh-Hans": "无法连接 TradeVault",
+   "hi": "TradeVault तक नहीं पहुँचा जा सकता",
+   "es": "No se puede conectar con TradeVault",
+   "ar": "تعذّر الوصول إلى TradeVault",
+   "fr": "TradeVault est injoignable",
+   "bn": "TradeVault-এ পৌঁছানো যাচ্ছে না",
+   "pt-BR": "Não foi possível acessar o TradeVault",
+   "ru": "TradeVault недоступен",
+   "id": "TradeVault tidak dapat dijangkau"
   }
  }
 }

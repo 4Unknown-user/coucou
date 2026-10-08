@@ -6,20 +6,12 @@ import { Bridge } from "../core/bridge";
 import { fileName } from "../core/diff";
 import type { Settings } from "../core/state";
 import { dailyTotals, parseBeats, toCsv, weekGrid, type DayTotal } from "../core/timetrack";
+import { formatMoney } from "../core/tradevault";
 import { formatDuration } from "../recap/summary";
 import { h, clear } from "../views/dom";
-import { language, t, weekdayShort } from "../i18n/i18n";
+import { t, weekdayShort } from "../i18n/i18n";
 
 const minutes = (ms: number) => Math.floor(ms / 60_000);
-
-/** "€1,234.50" in the interface language; a code Intl doesn't know is shown as is. */
-function money(amount: number, currency: string): string {
-  try {
-    return new Intl.NumberFormat(language(), { style: "currency", currency }).format(amount);
-  } catch {
-    return `${amount.toFixed(2)} ${currency}`;
-  }
-}
 
 export function timeSection(current: () => Settings, save: () => Promise<void>): HTMLElement {
   const table = h("div", {});
@@ -91,7 +83,7 @@ export function timeSection(current: () => Settings, save: () => Promise<void>):
       const amount = h("td", { class: "num" });
       const showAmount = () => {
         const r = Number(rate.value);
-        amount.textContent = r > 0 ? money((row.total / 3_600_000) * r, s.timeCurrency) : "";
+        amount.textContent = r > 0 ? formatMoney((row.total / 3_600_000) * r, s.timeCurrency) : "";
       };
       const store = () => {
         const r = Math.max(0, Number(rate.value) || 0);

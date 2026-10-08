@@ -142,6 +142,8 @@ export interface Settings {
   timeProjects: Record<string, { client: string; rate: number }>;
   /** Currency code the hourly rates are in. */
   timeCurrency: string;
+  /** TradeVault pill: alert when an account's P&L today reaches minus this. 0 = off. */
+  tradevaultLossLimit: number;
   /** Mochi on the desktop. Rust owns it: whatever the page sends back is ignored. */
   desktopMochi?: {
     onDesktop: boolean;
@@ -176,6 +178,7 @@ export const DEFAULT_SETTINGS: Settings = {
   language: "",
   timeProjects: {},
   timeCurrency: "USD",
+  tradevaultLossLimit: 0,
 };
 
 type Listener = () => void;

@@ -766,9 +766,34 @@ const INTEGRATIONS: IntegrationDef[] = [
     fields: [{ key: "notion-api-key", label: N_("Integration token"), placeholder: "ntn_…", secret: true }] },
   { id: "integration_calcom", name: "Cal.com", color: "#C9956A",
     fields: [{ key: "calcom-api-key", label: N_("API key"), placeholder: "cal_…", secret: true }] },
+  { id: "integration_tradevault", name: "TradeVault", color: "#5E6AD2",
+    fields: [
+      { key: "tradevault-url", label: N_("Address"), placeholder: "https://tradevault.example.com", secret: false },
+      { key: "tradevault-token", label: N_("Token"), placeholder: "tvc_…", secret: true },
+    ],
+    hint: N_("Create the token in TradeVault → Settings → Coucou desktop. http:// only works for a TradeVault running on this computer.") },
 ];
 
 const MAX_ACTIVE = MAX_DECLARED;
+
+/** TradeVault: the daily loss that raises an alert, in each account's own currency. */
+function lossLimitRow(): HTMLElement {
+  const input = h("input", {
+    type: "number", min: "0", step: "1", style: "width:96px",
+    value: settings.tradevaultLossLimit ? String(settings.tradevaultLossLimit) : "",
+    placeholder: t("Off"),
+  }) as HTMLInputElement;
+  input.addEventListener("change", () => {
+    settings.tradevaultLossLimit = Math.max(0, Number(input.value) || 0);
+    input.value = settings.tradevaultLossLimit ? String(settings.tradevaultLossLimit) : "";
+    void save();
+  });
+  return h("div", { class: "row" },
+    h("label", { style: "min-width:104px", text: t("Daily loss alert") }),
+    input,
+    h("span", { class: "hint", text: t("in the account's currency") }),
+  );
+}
 
 /** Everything that shows the declared pills, redrawn when any of them changes. */
 const declaredViews: (() => void)[] = [];
@@ -835,6 +860,7 @@ function integrationsSection(present: Record<string, boolean>): HTMLElement {
     }
 
     if (def.hint) rows.append(h("div", { class: "hint", text: t(def.hint) }));
+    if (def.id === "integration_tradevault") rows.append(lossLimitRow());
 
     list.append(
       h("div", { style: "display:flex;gap:12px;align-items:flex-start" },
@@ -1288,6 +1314,7 @@ async function render() {
   const keys = [
     "stripe-api-key", "github-token", "vercel-token",
     "n8n-url", "n8n-api-key", "resend-api-key", "notion-api-key", "calcom-api-key",
+    "tradevault-url", "tradevault-token",
   ];
   const present: Record<string, boolean> = {};
   for (const k of keys) present[k] = (await Bridge.secretPresent(k)) ?? false;
