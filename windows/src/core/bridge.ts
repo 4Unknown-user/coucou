@@ -147,6 +147,16 @@ export const Bridge = {
     callOrThrow<LocalServer>("local_connect", { provider, url }),
   /** Copies a dropped file into the inbox. */
   ingestFile: (path: string) => callOrThrow<DroppedFile>("ingest_file", { path }),
+  /** "Ask about my screen": a PNG of the island's display, into the inbox. */
+  captureScreen: () => callOrThrow<DroppedFile>("capture_screen"),
+  /** The newer version on offer, or null; throws in a build without updates. */
+  updateCheck: () => callOrThrow<string | null>("update_check"),
+  /** Installs the update and restarts into it. */
+  updateInstall: () => callOrThrow<void>("update_install"),
+  /** Project time heartbeats (last month and this one), as JSONL. */
+  timeRead: () => call<string>("time_read"),
+  /** Saves the time CSV into Downloads; returns where. */
+  timeSaveCsv: (csv: string) => callOrThrow<string>("time_save_csv", { csv }),
   /** Only ever tells you whether a key exists — never its value. */
   secretPresent: (key: string) => call<boolean>("secret_present", { key }),
   secretSet: (key: string, value: string) => callOrThrow<void>("secret_set", { key, value }),

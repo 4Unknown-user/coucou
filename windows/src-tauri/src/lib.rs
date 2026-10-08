@@ -25,7 +25,9 @@ mod secrets;
 mod session_window;
 mod settings;
 mod shortcuts;
+mod timetrack;
 mod tray;
+mod updater;
 #[cfg(windows)]
 mod webview_drop;
 
@@ -454,7 +456,7 @@ async fn local_connect(provider: String, url: String) -> Result<local_chat::Conn
 /// Stores the custom server's key for the address typed next to it; it is only
 /// ever sent to that address.
 #[tauri::command]
-fn local_set_key(url: String, key: String) -> Result<(), String> {
+async fn local_set_key(url: String, key: String) -> Result<(), String> {
     local_chat::set_custom_key(&url, &key)
 }
 
@@ -469,14 +471,26 @@ fn ingest_file(path: String) -> Result<DroppedFile, String> {
     files::ingest(&path)
 }
 
+/// "Ask about my screen": a PNG of the island's display, into the inbox.
+#[tauri::command]
+async fn capture_screen(app: AppHandle) -> Result<DroppedFile, String> {
+    let win = app.get_webview_window(island::WINDOW_LABEL).ok_or("no island")?;
+    let at = win.outer_position().map_err(|e| e.to_string())?;
+    let size = win.outer_size().map_err(|e| e.to_string())?;
+    let (x, y) = (at.x + size.width as i32 / 2, at.y + 1);
+    tauri::async_runtime::spawn_blocking(move || files::screenshot(x, y))
+        .await
+        .map_err(|e| e.to_string())?
+}
+
 /// The island may only ask whether a key exists — never read it.
 #[tauri::command]
-fn secret_present(key: String) -> bool {
+async fn secret_present(key: String) -> bool {
     secrets::present(&key)
 }
 
 #[tauri::command]
-fn secret_set(app: AppHandle, key: String, value: String) -> Result<(), String> {
+async fn secret_set(app: AppHandle, key: String, value: String) -> Result<(), String> {
     // Bound to its server's address: only local_set_key may store it.
     if key == local_chat::CUSTOM_KEY {
         return Err("use local_set_key".into());
@@ -492,7 +506,7 @@ fn secret_set(app: AppHandle, key: String, value: String) -> Result<(), String> 
 }
 
 #[tauri::command]
-fn secret_clear(app: AppHandle, key: String) -> Result<(), String> {
+async fn secret_clear(app: AppHandle, key: String) -> Result<(), String> {
     let had = key == "github-token" && secrets::present(&key);
     secrets::clear(&key)?;
     if had {
@@ -615,6 +629,19 @@ fn open_settings_window(app: AppHandle) {
 }
 
 pub fn run() {
+    // Release builds abort on panic with no console: leave the reason in
+    // coucou.log, or a crash leaves no trace at all.
+    let default_hook = std::panic::take_hook();
+    std::panic::set_hook(Box::new(move |info| {
+        let thread = std::thread::current();
+        log::line(format!(
+            "PANIC on thread '{}': {info}
+{}",
+            thread.name().unwrap_or("?"),
+            std::backtrace::Backtrace::force_capture()
+        ));
+        default_hook(info);
+    }));
     platform::prepare_environment();
     let loaded = settings::load();
     i18n::set_picked(&loaded.language);
@@ -635,6 +662,9 @@ pub fn run() {
     // Where no global shortcut can work, the plugin isn't even started.
     if platform::global_shortcuts_blocked().is_none() {
         builder = builder.plugin(shortcuts::plugin());
+    }
+    if let Some(plugin) = updater::plugin() {
+        builder = builder.plugin(plugin);
     }
 
     builder
@@ -682,6 +712,11 @@ pub fn run() {
             local_set_key,
             chat_reset,
             ingest_file,
+            capture_screen,
+            timetrack::time_read,
+            timetrack::time_save_csv,
+            updater::update_check,
+            updater::update_install,
             secret_present,
             secret_set,
             secret_clear,

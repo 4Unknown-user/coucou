@@ -209,6 +209,8 @@ async fn handle(app: AppHandle, mut pipe: impl Relay) {
     note_session_window(&pipe, &payload, &event);
     // Counts for the weekly recap — never the command, path or prompt itself.
     crate::recap::observe(&app, &payload);
+    // A heartbeat for the project's time — the folder and the time, nothing else.
+    crate::timetrack::observe(&payload, &event);
 
     if event != "PermissionRequest" {
         // The status line relay calls in with every Claude Code update: not log-worthy.

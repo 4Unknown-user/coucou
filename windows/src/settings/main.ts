@@ -16,6 +16,7 @@ import {
 } from "../core/pills";
 import { h, clear } from "../views/dom";
 import { agentsSection } from "./agents";
+import { timeSection } from "./time";
 import { renderDiff, statusDot } from "./parts";
 import {
   LANGUAGES, N_, isRtl, onLanguageChange, resolveLanguage, setLanguage, systemLanguages, t, tn,
@@ -900,6 +901,29 @@ function generalSection(): HTMLElement {
     void save();
   });
 
+  // Asks GitHub only on this click (updater.rs); a second click installs.
+  const updateNote = h("span", { class: "hint" });
+  const updateBtn = h("button", { text: t("Check for updates") }) as HTMLButtonElement;
+  let offered: string | null = null;
+  updateBtn.addEventListener("click", async () => {
+    updateBtn.disabled = true;
+    try {
+      if (offered) {
+        updateNote.textContent = t("Installing {version}…", { version: offered });
+        await Bridge.updateInstall(); // restarts the app
+        return;
+      }
+      offered = await Bridge.updateCheck();
+      updateNote.textContent = offered
+        ? t("Version {version} is available.", { version: offered })
+        : t("Coucou is up to date.");
+      if (offered) updateBtn.textContent = t("Install and restart");
+    } catch (err) {
+      updateNote.textContent = String(err).replace(/^Error:\s*/, "");
+    }
+    updateBtn.disabled = false;
+  });
+
   return h(
     "section",
     {},
@@ -915,6 +939,11 @@ function generalSection(): HTMLElement {
       h("span", { class: "hint", text: t("seconds after you leave the island") }),
     ),
     h("div", { class: "row" },
+      h("label", { text: t("Auto-hide") }),
+      toggle(settings.autoHide !== false, (v) => { settings.autoHide = v; void save(); }),
+      h("span", { class: "hint", text: t("Off: the island stays on screen until you close it") }),
+    ),
+    h("div", { class: "row" },
       h("label", { text: t("Island lives on") }),
       screen,
     ),
@@ -922,6 +951,7 @@ function generalSection(): HTMLElement {
       h("label", { text: t("Launch at startup") }),
       toggle(settings.autostart, (v) => { settings.autostart = v; void save(); }),
     ),
+    h("div", { class: "row" }, h("label", { text: t("Updates") }), updateBtn, updateNote),
     ...recapRows(),
     languageRow(),
   );
@@ -1299,6 +1329,7 @@ async function render() {
     activePillsSection(connected),
     integrationsSection(present),
     generalSection(),
+    timeSection(() => settings, save),
     shortcutsSection(shortcutReport),
     h("div", {
       class: "hint",

@@ -70,11 +70,25 @@ jobs:
       # `npm run build` (run by tauri as beforeBuildCommand) builds coucou-hook
       # first, which tauri.conf.json then bundles as a resource. `pack` then
       # copies the installer out of target/ under its shipping name.
+      # With the signing secret set, the installer is signed for the in-app
+      # updater (src-tauri/src/updater.rs) and release/latest.json is written.
+      # The public key and the repo are compiled in; without them the build
+      # simply has no updater.
       - name: Build and pack the installer
         id: pack
         shell: pwsh
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          COUCOU_UPDATER_PUBKEY: ${{ vars.COUCOU_UPDATER_PUBKEY }}
+          COUCOU_UPDATE_REPO: ${{ github.repository }}
         run: |
-          npm run pack
+          if ($env:TAURI_SIGNING_PRIVATE_KEY -and $env:COUCOU_UPDATER_PUBKEY) {
+            npm run pack:update
+          } else {
+            Write-Warning "No updater signing key or public key: building without updates."
+            npm run pack
+          }
           $version = (Get-Content src-tauri/tauri.conf.json | ConvertFrom-Json).version
           "version=$version" >> $env:GITHUB_OUTPUT
           Get-ChildItem release | Format-Table Name, Length
@@ -160,4 +174,9 @@ jobs:
               --title "Coucou for Windows (latest)" `
               --notes "Always the newest Windows build — currently $v." `
               --latest=false
+          }
+          # The updater's feed. Uploaded last, so it never announces an
+          # installer that isn't on the windows-v<version> release yet.
+          if (Test-Path release/latest.json) {
+            gh release upload windows-latest release/latest.json --clobber
           }

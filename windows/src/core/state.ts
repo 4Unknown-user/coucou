@@ -99,6 +99,8 @@ export interface Settings {
   soundEnabled: boolean;
   soundVolume: number;
   autoCloseInterval: number;
+  /** Off: the island never folds or hides by itself (pinned on screen). */
+  autoHide: boolean;
   absenceInterval: number;
   /** Declared pills next to the main one (at most 4), in the order they were added. */
   activeIntegrations: string[];
@@ -136,6 +138,10 @@ export interface Settings {
    * else English), or one of src/i18n's ten codes ("fr", "pt-BR", "zh-Hans"…).
    */
   language: string;
+  /** Settings → Time: client and hourly rate per project root (src/core/timetrack.ts). */
+  timeProjects: Record<string, { client: string; rate: number }>;
+  /** Currency code the hourly rates are in. */
+  timeCurrency: string;
   /** Mochi on the desktop. Rust owns it: whatever the page sends back is ignored. */
   desktopMochi?: {
     onDesktop: boolean;
@@ -147,6 +153,7 @@ export const DEFAULT_SETTINGS: Settings = {
   soundEnabled: true,
   soundVolume: 0.12,
   autoCloseInterval: 15,
+  autoHide: true,
   absenceInterval: 180,
   activeIntegrations: [
     "integration_resend", "integration_n8n", "integration_vercel", "integration_github",
@@ -167,6 +174,8 @@ export const DEFAULT_SETTINGS: Settings = {
   shortcuts: {},
   mochiOutfit: DEFAULT_OUTFIT,
   language: "",
+  timeProjects: {},
+  timeCurrency: "USD",
 };
 
 type Listener = () => void;

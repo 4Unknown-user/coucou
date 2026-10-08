@@ -16,6 +16,9 @@ pub struct Settings {
     pub sound_enabled: bool,
     pub sound_volume: f64,
     pub auto_close_interval: f64,
+    /// Off: the island never folds or hides by itself — it stays on screen
+    /// until closed explicitly (Escape, OK, the close button).
+    pub auto_hide: bool,
     pub absence_interval: f64,
     pub active_integrations: Vec<String>,
     /// The always-on workspace pill (src/core/pills.ts checks it is one).
@@ -61,6 +64,18 @@ pub struct Settings {
     /// Mochi on the desktop: whether he lives there, and his spot. Owned by
     /// the Rust side (desktop.rs) — what a webview sends back is ignored.
     pub desktop_mochi: DesktopMochiPref,
+    /// Settings → Time: who each project (its git root, as timetrack.rs logs
+    /// it) is billed to, and at what hourly rate.
+    pub time_projects: BTreeMap<String, TimeProject>,
+    /// Currency code the hourly rates are in ("USD", "EUR", "INR"…).
+    pub time_currency: String,
+}
+
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct TimeProject {
+    pub client: String,
+    pub rate: f64,
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
@@ -90,6 +105,7 @@ impl Default for Settings {
             sound_enabled: true,
             sound_volume: 0.12,
             auto_close_interval: 15.0,
+            auto_hide: true,
             absence_interval: 180.0,
             active_integrations: vec![
                 "integration_resend".into(),
@@ -114,6 +130,8 @@ impl Default for Settings {
             mochi_outfit: "auto".into(),
             language: String::new(),
             desktop_mochi: DesktopMochiPref::default(),
+            time_projects: BTreeMap::new(),
+            time_currency: "USD".into(),
         }
     }
 }
@@ -369,6 +387,7 @@ mod tests {
   "soundEnabled": false,
   "soundVolume": 0.5,
   "autoCloseInterval": 30.0,
+  "autoHide": false,
   "absenceInterval": 60.0,
   "activeIntegrations": ["integration_notion"],
   "mainPill": "agent_cursor",
@@ -387,7 +406,9 @@ mod tests {
   "shortcuts": { "openChat": { "keys": "Ctrl+Shift+K", "enabled": false } },
   "mochiOutfit": "witchHat",
   "language": "pt-BR",
-  "desktopMochi": { "onDesktop": true, "spot": { "x": 1500.5, "y": -300.0, "space": "screen" } }
+  "desktopMochi": { "onDesktop": true, "spot": { "x": 1500.5, "y": -300.0, "space": "screen" } },
+  "timeProjects": { "/code/acme": { "client": "Acme", "rate": 90.0 } },
+  "timeCurrency": "EUR"
 }"#;
 
     fn custom() -> Value {
@@ -752,6 +773,7 @@ mod tests {
                 "soundEnabled",
                 "soundVolume",
                 "autoCloseInterval",
+                "autoHide",
                 "absenceInterval",
                 "activeIntegrations",
                 "mainPill",
@@ -771,6 +793,8 @@ mod tests {
                 "mochiOutfit",
                 "language",
                 "desktopMochi",
+                "timeProjects",
+                "timeCurrency",
             ]
         );
         let _ = std::fs::remove_dir_all(&dir);

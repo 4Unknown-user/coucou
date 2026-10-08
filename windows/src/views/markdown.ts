@@ -7,6 +7,7 @@
 // a model writes can inject markup. Links open only when they are http(s), and
 // even then through Rust, which checks the scheme again.
 
+import { highlightInto } from "./highlight";
 import { Bridge } from "../core/bridge";
 import { h, svg } from "./dom";
 import { ICONS } from "./icons";
@@ -241,8 +242,11 @@ function render(block: Block): HTMLElement {
       inline(block.text, el);
       return el;
     }
-    case "code":
-      return h("div", { class: "md-pre" }, h("pre", { text: block.code }), copyButton(block.code));
+    case "code": {
+      const pre = h("pre", {});
+      highlightInto(pre, block.code, block.lang);
+      return h("div", { class: "md-pre" }, pre, copyButton(block.code));
+    }
     case "item": {
       const text = h("span", { class: "md-p" });
       inline(block.text, text);

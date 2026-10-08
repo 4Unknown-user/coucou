@@ -307,3 +307,28 @@ test("an unusable delay is ignored", () => {
   for (const bad of [NaN, -1, Infinity]) fsm.homeToPetitDelay = bad;
   assert.equal(fsm.homeToPetitDelay, 15);
 });
+
+test("with auto-hide off the island never folds or hides by itself", () => {
+  fsm.autoHide = false;
+  fsm.forceHome();
+  fsm.mouseLeft();
+  seconds(3600);
+  assert.equal(fsm.state, "home");
+  fsm.forcePetit();
+  fsm.mouseLeft();
+  seconds(3600);
+  assert.equal(fsm.state, "petit");
+  // Back on: the compact island starts its countdown at once.
+  fsm.autoHide = true;
+  seconds(60);
+  assert.equal(fsm.state, "hidden");
+});
+
+test("turning auto-hide off cancels a running countdown", () => {
+  fsm.forceHome();
+  fsm.mouseLeft();
+  seconds(10);
+  fsm.autoHide = false;
+  seconds(3600);
+  assert.equal(fsm.state, "home");
+});

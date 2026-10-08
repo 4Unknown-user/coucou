@@ -387,3 +387,46 @@ select option {
 html[dir="rtl"] :is(.diff, .path, .keycap, input[type="password"], input[type="text"]) {
   direction: ltr;
 }
+
+/* ── Time (settings/time.ts) ─────────────────────────────────────────────── */
+
+.time-scroll {
+  overflow-x: auto;
+}
+
+.time-table {
+  width: 100%;
+  border-collapse: collapse;
+  font: 400 12px var(--font);
+}
+
+.time-table th {
+  font-weight: 500;
+  color: var(--dim);
+  text-align: start;
+  padding: 4px 6px;
+  white-space: nowrap;
+}
+
+.time-table td {
+  padding: 4px 5px;
+  border-top: 1px solid var(--hairline);
+  white-space: nowrap;
+}
+
+.time-table .num {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.time-table .dim {
+  color: var(--dim);
+}
+
+.time-table input[type="text"] {
+  width: 84px;
+}
+
+.time-table input[type="number"] {
+  width: 56px;
+}

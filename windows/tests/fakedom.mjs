@@ -128,6 +128,8 @@ export function installFakeDom() {
     createElementNS: (ns, tag) => new FakeElement(tag, ns),
     createTextNode: (text) => new FakeText(text),
     body: new FakeElement("body"),
+    // Prism looks for its own <script> on import; a module has none.
+    getElementsByTagName: () => [],
   };
   return { root: () => new FakeElement("div") };
 }

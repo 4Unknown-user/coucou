@@ -135,3 +135,19 @@ test("a web link opens through Rust; anything else is plain text", () => {
   assert.deepEqual(sent("open_url"), [{ url: "https://example.com/docs" }]);
   assert.match(root.textContent, /or this\.$/);
 });
+
+test("a fenced block in a known language is coloured with spans, never markup", () => {
+  const root = dom.root();
+  renderMarkdown(root, '```py\nprint("<b>hi</b>")  # note\n```');
+  const pre = root.find("PRE")[0];
+  assert.equal(pre.textContent, 'print("<b>hi</b>")  # note');
+  const classes = pre.find("SPAN").map((s) => s.className);
+  assert.ok(classes.includes("tok-string"));
+  assert.ok(classes.includes("tok-comment"));
+});
+
+test("a block in an unknown language stays plain text", () => {
+  const root = dom.root();
+  renderMarkdown(root, "```nope\nx = 1\n```");
+  assert.equal(root.find("PRE")[0].find("SPAN").length, 0);
+});

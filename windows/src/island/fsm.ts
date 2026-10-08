@@ -31,6 +31,25 @@ export class IslandStateMachine {
   pinned = false;
 
   /**
+   * The "Auto-hide" preference. Off, no timer ever folds or hides the island:
+   * it stays on screen until closed explicitly. Turning it back on lets a
+   * compact island start its countdown at once.
+   */
+  get autoHide(): boolean {
+    return this.hides;
+  }
+  set autoHide(on: boolean) {
+    if (on === this.hides) return;
+    this.hides = on;
+    if (!on) {
+      this.clear("petitHide");
+      this.clear("homeCollapse");
+    } else if (this.state === "petit") {
+      this.schedulePetitHide();
+    }
+  }
+
+  /**
    * When the open island will fold, on the performance.now() clock, while the
    * mouse-leave countdown runs; null otherwise. The island draws its countdown
    * bar from it.
@@ -38,6 +57,7 @@ export class IslandStateMachine {
   homeCollapseDueAt: number | null = null;
 
   private homeDelay = 15;
+  private hides = true;
   private petitHide: number | null = null;
   private homeCollapse: number | null = null;
   private greetCollapse: number | null = null;
@@ -125,6 +145,7 @@ export class IslandStateMachine {
 
   private schedulePetitHide() {
     this.clear("petitHide");
+    if (!this.hides) return;
     // A card folded away while it waits for an answer keeps the compact island
     // on screen, so it can be reopened (isHeldOpen on macOS).
     if (this.pinned) return;
@@ -136,7 +157,7 @@ export class IslandStateMachine {
 
   private scheduleHomeCollapse() {
     this.clear("homeCollapse");
-    if (this.pinned) return;
+    if (this.pinned || !this.hides) return;
     const ms = this.homeDelay * 1000;
     this.homeCollapseDueAt = performance.now() + ms;
     this.homeCollapse = window.setTimeout(() => {

@@ -826,6 +826,70 @@ body {
 
 /* ── Settings view (in-island) ──────────────────────────────────────────── */
 
+/* ── Time today (views/time.ts) ─────────────────────────────────────────── */
+
+.time-stack {
+  padding: 12px 18px 12px 92px;
+  justify-content: flex-start;
+  gap: 7px;
+}
+
+.time-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.time-total {
+  font: 500 12px var(--font);
+  color: var(--dim);
+}
+
+.time-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.time-row {
+  display: grid;
+  grid-template-columns: minmax(0, 150px) 1fr 52px;
+  align-items: center;
+  gap: 10px;
+  font: 400 12px var(--font);
+  color: #c5c8cd;
+}
+
+.time-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.time-track {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.time-bar {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: #6366f1;
+}
+
+.time-dur {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.time-more {
+  align-self: flex-start;
+  margin-top: auto;
+  color: #8e939c;
+}
+
 .settings-rows {
   display: flex;
   flex-direction: column;
@@ -1067,6 +1131,17 @@ input[type="range"]::-webkit-slider-thumb {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+
+/* Syntax colours (views/highlight.ts): Prism token types as tok-<type>. */
+.md-pre :is(.tok-comment, .tok-prolog, .tok-doctype, .tok-cdata) { color: #6b7280; font-style: italic; }
+.md-pre :is(.tok-keyword, .tok-important, .tok-atrule, .tok-rule) { color: #c792ea; }
+.md-pre :is(.tok-string, .tok-char, .tok-attr-value, .tok-template-string, .tok-inserted) { color: #a5d6a7; }
+.md-pre :is(.tok-number, .tok-boolean, .tok-constant, .tok-symbol) { color: #f5a97f; }
+.md-pre :is(.tok-function, .tok-function-definition, .tok-class-name, .tok-macro) { color: #82aaff; }
+.md-pre :is(.tok-tag, .tok-selector, .tok-builtin, .tok-property, .tok-key) { color: #7dd3fc; }
+.md-pre :is(.tok-operator, .tok-punctuation) { color: #8b93a1; }
+.md-pre :is(.tok-variable, .tok-regex, .tok-attr-name, .tok-parameter) { color: #f0c674; }
+.md-pre .tok-deleted { color: #f4505e; }
 
 .md-copy {
   flex: 0 0 22px;
@@ -1364,6 +1439,24 @@ input[type="range"]::-webkit-slider-thumb {
 
 .send-btn:active {
   transform: scale(0.94);
+}
+
+.shot-btn {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--dim-3);
+  display: grid;
+  place-items: center;
+  cursor: default;
+}
+
+.shot-btn:hover {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.07);
 }
 
 /* ── Drop zone ──────────────────────────────────────────────────────────── */

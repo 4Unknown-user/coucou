@@ -27,6 +27,7 @@ const STRINGS = {
   loading: N_("Loading models…"),
   noKey: N_("No API key — add it in Settings."),
   openSettings: N_("Open Settings"),
+  screenshot: N_("Ask about my screen"),
 };
 
 let nextId = 1;
@@ -211,7 +212,28 @@ export function buildPrompt(onHeightChange: () => void): ViewHost {
     spellcheck: "false",
   }) as HTMLInputElement;
   const send = h("button", { class: "send-btn", title: tl(STRINGS.send) }, svg(ICONS.arrowUp, 11));
-  const bar = h("div", { class: "chat-bar" }, input, send);
+  // Attaches a screenshot the way a dropped file is: it rides with the next question.
+  const shot = h("button", { class: "shot-btn", title: tl(STRINGS.screenshot), "aria-label": tl(STRINGS.screenshot) },
+    svg(ICONS.camera, 14, { evenOdd: true }));
+  shot.addEventListener("click", async () => {
+    if (sending) return;
+    try {
+      const file = await Bridge.captureScreen();
+      State.droppedFile = { name: file.name, path: file.path };
+      State.promptContext = { kind: "file", name: file.name, path: file.path };
+      State.chatHistory = [];
+      void Bridge.chatReset();
+      Sound.play("approve");
+    } catch (err) {
+      State.noteMessage = String(err).replace(/^Error:\s*/, "");
+      State.view = "note";
+      Sound.play("error");
+    }
+    State.notify();
+    onHeightChange();
+    input.focus();
+  });
+  const bar = h("div", { class: "chat-bar" }, input, shot, send);
 
   const modelDot = h("i", { class: "model-dot" });
   const modelName = h("span", { class: "model-name" });

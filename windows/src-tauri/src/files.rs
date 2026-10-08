@@ -126,6 +126,51 @@ fn sweep(dir: &Path) {
     }
 }
 
+// ── Screenshot ────────────────────────────────────────────────────────────────
+//
+// "Ask about my screen": one PNG of the display at (x, y), the island's, lands
+// in the inbox like a dropped file. Only ever taken on the user's click.
+
+/// Longest side sent to a model: enough to read text, and well under every
+/// provider's image size limit once encoded.
+const SHOT_MAX_SIDE: u32 = 1568;
+
+#[cfg(windows)]
+pub fn screenshot(x: i32, y: i32) -> Result<DroppedFile, String> {
+    use xcap::image::imageops::{resize, FilterType};
+
+    let monitor = xcap::Monitor::from_point(x, y).map_err(|e| e.to_string())?;
+    let mut image = monitor.capture_image().map_err(|e| e.to_string())?;
+    let (w, h) = image.dimensions();
+    let scale = f64::from(SHOT_MAX_SIDE) / f64::from(w.max(h));
+    if scale < 1.0 {
+        let fit = |n: u32| ((f64::from(n) * scale).round() as u32).max(1);
+        image = resize(&image, fit(w), fit(h), FilterType::Triangle);
+    }
+
+    let dir = inbox_dir();
+    crate::platform::ensure_private_dir(&settings::local_dir()).map_err(|e| e.to_string())?;
+    std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
+    let t = crate::platform::local_time();
+    let name = format!(
+        "Screenshot {:04}-{:02}-{:02} {:02}.{:02}.{:02}.png",
+        t.year, t.month, t.day, t.hour, t.minute, t.second
+    );
+    let path = dir.join(&name);
+    image.save(&path).map_err(|e| e.to_string())?;
+    sweep(&dir);
+    Ok(DroppedFile {
+        size: std::fs::metadata(&path).map(|m| m.len()).unwrap_or(0),
+        name,
+        path: path.to_string_lossy().to_string(),
+    })
+}
+
+#[cfg(not(windows))]
+pub fn screenshot(_x: i32, _y: i32) -> Result<DroppedFile, String> {
+    Err(crate::i18n::t("Screenshots aren't available on this system yet."))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
