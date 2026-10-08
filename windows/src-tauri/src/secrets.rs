@@ -22,6 +22,7 @@ pub const KNOWN_KEYS: &[&str] = &[
     "calcom-api-key",
     "tradevault-url",
     "tradevault-token",
+    "finnhub-api-key",
 ];
 
 fn entry(key: &str) -> Option<Entry> {

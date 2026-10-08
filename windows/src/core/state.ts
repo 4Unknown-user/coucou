@@ -9,6 +9,7 @@ import {
 import type { CodexPlanUsage, PlanUsage } from "./plan";
 import type { ProviderId } from "./providers";
 import type { FileDiff } from "./diff";
+import type { WatchItem } from "./watchlist";
 import type { Bindings } from "./shortcuts";
 import { DEFAULT_OUTFIT, type Outfit } from "../mochi/wardrobe";
 
@@ -144,6 +145,8 @@ export interface Settings {
   timeCurrency: string;
   /** TradeVault pill: alert when an account's P&L today reaches minus this. 0 = off. */
   tradevaultLossLimit: number;
+  /** Watchlist pill: streamed by watchlist.rs; levels checked in src/core/watchlist.ts. */
+  watchlist: WatchItem[];
   /** Mochi on the desktop. Rust owns it: whatever the page sends back is ignored. */
   desktopMochi?: {
     onDesktop: boolean;
@@ -179,6 +182,10 @@ export const DEFAULT_SETTINGS: Settings = {
   timeProjects: {},
   timeCurrency: "USD",
   tradevaultLossLimit: 0,
+  watchlist: [
+    { provider: "binance", symbol: "BTCUSDT", above: null, below: null },
+    { provider: "binance", symbol: "ETHUSDT", above: null, below: null },
+  ],
 };
 
 type Listener = () => void;

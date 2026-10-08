@@ -24,6 +24,10 @@ tokio = { version = "1", features = ["net", "io-util", "sync", "time", "rt"] }
 reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
 # In-app updates, signed (updater.rs). Off unless the build is given a key.
 tauri-plugin-updater = "2"
+# Watchlist price feeds (watchlist.rs): Binance, Coinbase and Finnhub WebSockets,
+# over the same rustls (ring) that reqwest already brings.
+tokio-tungstenite = { version = "0.30", default-features = false, features = ["connect", "rustls-tls-webpki-roots"] }
+futures-util = { version = "0.3", default-features = false, features = ["sink", "std"] }
 
 [target.'cfg(windows)'.dependencies]
 keyring = { version = "3", features = ["windows-native"] }

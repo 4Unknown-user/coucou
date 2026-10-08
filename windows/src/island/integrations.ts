@@ -5,6 +5,9 @@
 import { onEvent, Bridge, type IntegrationUpdate } from "../core/bridge";
 import { gitHubAlert, type GitHubEvent } from "../core/github";
 import { TRADEVAULT, readSummary, tradevaultAlert } from "../core/tradevault";
+import {
+  WATCHLIST, alertLabel, formatPrice, mergeQuotes, readSnapshot, readWatchlist, watchAlerts,
+} from "../core/watchlist";
 import { availablePills } from "../core/pills";
 import { Sound } from "../core/sound";
 import { State } from "../core/state";
@@ -17,6 +20,7 @@ const clearTimers = new Map<string, number>();
 export function registerIntegrationHandlers(island: Island) {
   void onEvent<IntegrationUpdate>("integration", (update) => handle(island, update));
   void onEvent<GitHubEvent[]>("github-alerts", handleGitHubAlerts);
+  void onEvent<unknown>("watchlist", (snapshot) => handleWatchlist(island, snapshot));
   void refreshConfigured();
   State.subscribe(refreshGitHubWhenShown);
 }
@@ -89,6 +93,29 @@ export async function refreshHookPills() {
     State.integrations[id] = { ...info, configured: present };
   }
   State.notify();
+}
+
+/** Cooldowns of the watchlist's alerts (see watchAlerts). */
+let watchFired: Record<string, number> = {};
+
+/**
+ * A price send from watchlist.rs: keep the latest quote per symbol and, when a
+ * level was crossed, raise it like any integration event — badge, sound, the
+ * compact island. Above is good news (green), below a warning (red).
+ */
+function handleWatchlist(island: Island, raw: unknown) {
+  if (State.paused) return;
+  const snap = readSnapshot(raw);
+  const previous = readSnapshot(State.integrations[WATCHLIST]?.data).quotes;
+  const { alerts, fired } = watchAlerts(readWatchlist(State.settings.watchlist), previous, snap.quotes, watchFired, Date.now());
+  watchFired = fired;
+  const first = alerts[0];
+  handle(island, {
+    id: WATCHLIST,
+    data: { quotes: mergeQuotes(previous, snap.quotes), status: snap.status },
+    error: null,
+    event: first ? { success: first.direction === "above", label: alertLabel(first), detail: formatPrice(first.price) } : null,
+  });
 }
 
 function handle(island: Island, update: IntegrationUpdate) {

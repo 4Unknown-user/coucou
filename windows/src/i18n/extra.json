@@ -3690,6 +3690,160 @@
    "pt-BR": "Não foi possível acessar o TradeVault",
    "ru": "TradeVault недоступен",
    "id": "TradeVault tidak dapat dijangkau"
+  },
+  "{symbol} above {level}": {
+   "zh-Hans": "{symbol} 高于 {level}",
+   "hi": "{symbol} {level} से ऊपर",
+   "es": "{symbol} por encima de {level}",
+   "ar": "{symbol} فوق {level}",
+   "fr": "{symbol} au-dessus de {level}",
+   "bn": "{symbol} {level}-এর উপরে",
+   "pt-BR": "{symbol} acima de {level}",
+   "ru": "{symbol} выше {level}",
+   "id": "{symbol} di atas {level}"
+  },
+  "{symbol} below {level}": {
+   "zh-Hans": "{symbol} 低于 {level}",
+   "hi": "{symbol} {level} से नीचे",
+   "es": "{symbol} por debajo de {level}",
+   "ar": "{symbol} تحت {level}",
+   "fr": "{symbol} en dessous de {level}",
+   "bn": "{symbol} {level}-এর নিচে",
+   "pt-BR": "{symbol} abaixo de {level}",
+   "ru": "{symbol} ниже {level}",
+   "id": "{symbol} di bawah {level}"
+  },
+  "Nothing watched yet.": {
+   "zh-Hans": "尚未关注任何内容。",
+   "hi": "अभी कुछ भी वॉच नहीं किया जा रहा।",
+   "es": "Todavía no sigues nada.",
+   "ar": "لا شيء قيد المتابعة بعد.",
+   "fr": "Rien n'est suivi pour l'instant.",
+   "bn": "এখনও কিছু নজরে রাখা হয়নি।",
+   "pt-BR": "Nada acompanhado ainda.",
+   "ru": "Пока ничего не отслеживается.",
+   "id": "Belum ada yang dipantau."
+  },
+  "Symbol": {
+   "zh-Hans": "代码",
+   "hi": "सिंबल",
+   "es": "Símbolo",
+   "ar": "الرمز",
+   "fr": "Symbole",
+   "bn": "প্রতীক",
+   "pt-BR": "Símbolo",
+   "ru": "Тикер",
+   "id": "Simbol"
+  },
+  "Alert above": {
+   "zh-Hans": "高于时提醒",
+   "hi": "इससे ऊपर अलर्ट",
+   "es": "Alertar por encima",
+   "ar": "تنبيه فوق",
+   "fr": "Alerte au-dessus",
+   "bn": "উপরে গেলে সতর্কতা",
+   "pt-BR": "Alertar acima",
+   "ru": "Оповестить выше",
+   "id": "Peringatan di atas"
+  },
+  "Alert below": {
+   "zh-Hans": "低于时提醒",
+   "hi": "इससे नीचे अलर्ट",
+   "es": "Alertar por debajo",
+   "ar": "تنبيه تحت",
+   "fr": "Alerte en dessous",
+   "bn": "নিচে নামলে সতর্কতা",
+   "pt-BR": "Alertar abaixo",
+   "ru": "Оповестить ниже",
+   "id": "Peringatan di bawah"
+  },
+  "Add": {
+   "zh-Hans": "添加",
+   "hi": "जोड़ें",
+   "es": "Añadir",
+   "ar": "إضافة",
+   "fr": "Ajouter",
+   "bn": "যোগ করুন",
+   "pt-BR": "Adicionar",
+   "ru": "Добавить",
+   "id": "Tambah"
+  },
+  "“{symbol}” isn't a {provider} symbol — try {example}.": {
+   "zh-Hans": "“{symbol}” 不是 {provider} 的代码——试试 {example}。",
+   "hi": "“{symbol}” {provider} का सिंबल नहीं है — {example} आज़माएँ।",
+   "es": "“{symbol}” no es un símbolo de {provider}: prueba {example}.",
+   "ar": "“{symbol}” ليس رمزًا في {provider} — جرّب {example}.",
+   "fr": "« {symbol} » n'est pas un symbole {provider} — essayez {example}.",
+   "bn": "“{symbol}” {provider}-এর প্রতীক নয় — {example} চেষ্টা করুন।",
+   "pt-BR": "“{symbol}” não é um símbolo da {provider} — tente {example}.",
+   "ru": "«{symbol}» — не тикер {provider}, попробуйте {example}.",
+   "id": "“{symbol}” bukan simbol {provider} — coba {example}."
+  },
+  "Free key from finnhub.io": {
+   "zh-Hans": "finnhub.io 的免费密钥",
+   "hi": "finnhub.io से मुफ़्त कुंजी",
+   "es": "Clave gratuita de finnhub.io",
+   "ar": "مفتاح مجاني من finnhub.io",
+   "fr": "Clé gratuite sur finnhub.io",
+   "bn": "finnhub.io থেকে বিনামূল্যের কী",
+   "pt-BR": "Chave gratuita do finnhub.io",
+   "ru": "Бесплатный ключ с finnhub.io",
+   "id": "Kunci gratis dari finnhub.io"
+  },
+  "Watchlist": {
+   "zh-Hans": "自选列表",
+   "hi": "वॉचलिस्ट",
+   "es": "Lista de seguimiento",
+   "ar": "قائمة المتابعة",
+   "fr": "Liste de suivi",
+   "bn": "ওয়াচলিস্ট",
+   "pt-BR": "Lista de observação",
+   "ru": "Список наблюдения",
+   "id": "Daftar pantau"
+  },
+  "Live prices for the Watchlist pill: crypto from Binance or Coinbase, US stocks from Finnhub. Streams only while the pill is on.": {
+   "zh-Hans": "自选列表胶囊的实时价格：加密货币来自 Binance 或 Coinbase，美股来自 Finnhub。仅在胶囊开启时推送。",
+   "hi": "वॉचलिस्ट पिल के लिए लाइव कीमतें: क्रिप्टो Binance या Coinbase से, अमेरिकी शेयर Finnhub से। केवल तब स्ट्रीम होती हैं जब पिल चालू हो।",
+   "es": "Precios en vivo para la píldora Lista de seguimiento: cripto de Binance o Coinbase, acciones de EE. UU. de Finnhub. Solo transmite mientras la píldora está activa.",
+   "ar": "أسعار مباشرة لحبة قائمة المتابعة: العملات المشفرة من Binance أو Coinbase، والأسهم الأمريكية من Finnhub. لا يتم البث إلا عندما تكون الحبة مفعّلة.",
+   "fr": "Prix en direct pour la pastille Liste de suivi : crypto via Binance ou Coinbase, actions US via Finnhub. Le flux ne tourne que lorsque la pastille est activée.",
+   "bn": "ওয়াচলিস্ট পিলের জন্য লাইভ দাম: ক্রিপ্টো Binance বা Coinbase থেকে, মার্কিন শেয়ার Finnhub থেকে। পিল চালু থাকলেই শুধু স্ট্রিম হয়।",
+   "pt-BR": "Preços ao vivo para a pílula Lista de observação: cripto da Binance ou Coinbase, ações dos EUA da Finnhub. Só transmite enquanto a pílula estiver ligada.",
+   "ru": "Цены в реальном времени для пилюли «Список наблюдения»: криптовалюта с Binance или Coinbase, акции США с Finnhub. Поток идёт, только пока пилюля включена.",
+   "id": "Harga langsung untuk pil Daftar pantau: kripto dari Binance atau Coinbase, saham AS dari Finnhub. Hanya mengalir saat pil aktif."
+  },
+  "Finnhub key missing": {
+   "zh-Hans": "缺少 Finnhub 密钥",
+   "hi": "Finnhub कुंजी नहीं है",
+   "es": "Falta la clave de Finnhub",
+   "ar": "مفتاح Finnhub مفقود",
+   "fr": "Clé Finnhub manquante",
+   "bn": "Finnhub কী নেই",
+   "pt-BR": "Chave da Finnhub ausente",
+   "ru": "Нет ключа Finnhub",
+   "id": "Kunci Finnhub belum ada"
+  },
+  "Reconnecting…": {
+   "zh-Hans": "正在重新连接…",
+   "hi": "फिर से कनेक्ट हो रहा है…",
+   "es": "Reconectando…",
+   "ar": "جارٍ إعادة الاتصال…",
+   "fr": "Reconnexion…",
+   "bn": "আবার সংযোগ হচ্ছে…",
+   "pt-BR": "Reconectando…",
+   "ru": "Переподключение…",
+   "id": "Menyambung ulang…"
+  },
+  "Prices": {
+   "zh-Hans": "价格",
+   "hi": "कीमतें",
+   "es": "Precios",
+   "ar": "الأسعار",
+   "fr": "Prix",
+   "bn": "দাম",
+   "pt-BR": "Preços",
+   "ru": "Цены",
+   "id": "Harga"
   }
  }
 }

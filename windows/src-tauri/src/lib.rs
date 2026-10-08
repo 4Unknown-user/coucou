@@ -28,6 +28,7 @@ mod shortcuts;
 mod timetrack;
 mod tray;
 mod updater;
+mod watchlist;
 #[cfg(windows)]
 mod webview_drop;
 
@@ -781,6 +782,7 @@ pub fn run() {
             hooks::ensure_hook_exe(&handle);
             pipe::start(handle.clone());
             integrations::start(handle.clone());
+            watchlist::start(handle.clone());
             shortcuts::apply(&handle, &loaded.shortcuts);
             Ok(())
         })

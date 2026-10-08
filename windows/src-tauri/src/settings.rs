@@ -72,6 +72,19 @@ pub struct Settings {
     /// TradeVault pill: alert when an account's P&L today falls to minus this
     /// (in that account's currency). 0 = no alert.
     pub tradevault_loss_limit: f64,
+    /// Watchlist pill: what watchlist.rs streams, and the levels the island
+    /// alerts on (src/core/watchlist.ts).
+    pub watchlist: Vec<WatchItem>,
+}
+
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct WatchItem {
+    /// "binance", "coinbase" or "finnhub"; kept as it comes, like `mochi_outfit`.
+    pub provider: String,
+    pub symbol: String,
+    pub above: Option<f64>,
+    pub below: Option<f64>,
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
@@ -136,6 +149,10 @@ impl Default for Settings {
             time_projects: BTreeMap::new(),
             time_currency: "USD".into(),
             tradevault_loss_limit: 0.0,
+            watchlist: vec![
+                WatchItem { provider: "binance".into(), symbol: "BTCUSDT".into(), above: None, below: None },
+                WatchItem { provider: "binance".into(), symbol: "ETHUSDT".into(), above: None, below: None },
+            ],
         }
     }
 }
@@ -413,7 +430,8 @@ mod tests {
   "desktopMochi": { "onDesktop": true, "spot": { "x": 1500.5, "y": -300.0, "space": "screen" } },
   "timeProjects": { "/code/acme": { "client": "Acme", "rate": 90.0 } },
   "timeCurrency": "EUR",
-  "tradevaultLossLimit": 500.0
+  "tradevaultLossLimit": 500.0,
+  "watchlist": [{ "provider": "finnhub", "symbol": "AAPL", "above": 200.0, "below": null }]
 }"#;
 
     fn custom() -> Value {
@@ -801,6 +819,7 @@ mod tests {
                 "timeProjects",
                 "timeCurrency",
                 "tradevaultLossLimit",
+                "watchlist",
             ]
         );
         let _ = std::fs::remove_dir_all(&dir);

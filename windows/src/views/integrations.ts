@@ -5,6 +5,7 @@
 // (month → day → booking); here it is the list of upcoming bookings.
 
 import { TRADEVAULT, formatMoney, readSummary } from "../core/tradevault";
+import { WATCHLIST, formatPrice, itemKey, readSnapshot, readWatchlist } from "../core/watchlist";
 import { h, svg, clear, dot } from "./dom";
 import { ICONS } from "./icons";
 import { State, type AgentTask } from "../core/state";
@@ -262,6 +263,42 @@ function tradevaultCard(): HTMLElement {
   return h("div", { class: "int-card" }, header("#5E6AD2", "TradeVault", t("Today")), rows);
 }
 
+// ── Watchlist ─────────────────────────────────────────────────────────────────
+
+const FEED_COLORS: Record<string, string> = { binance: "#F0B90B", coinbase: "#3B82F6", finnhub: "#22C55E" };
+
+/** Why a feed shows no price, in a few words; null when it is live. */
+function feedNote(status: string | undefined): string | null {
+  switch (status) {
+    case "live":
+      return null;
+    case "noKey":
+      return t("Finnhub key missing");
+    case "retrying":
+      return t("Reconnecting…");
+    default:
+      return t("Connecting…");
+  }
+}
+
+function watchlistCard(): HTMLElement {
+  const items = readWatchlist(State.settings.watchlist);
+  const { quotes, status } = readSnapshot(get(WATCHLIST));
+  const rows = h("div", { class: "int-rows" });
+  items.slice(0, 3).forEach((item, i) => {
+    const q = quotes[itemKey(item)];
+    const cells: Node[] = [h("span", { class: "int-name", style: "flex:0 0 auto", text: item.symbol })];
+    const note = q ? null : feedNote(status[item.provider]);
+    const levels = [item.above != null ? `▲ ${formatPrice(item.above)}` : "", item.below != null ? `▼ ${formatPrice(item.below)}` : ""]
+      .filter(Boolean).join("  ");
+    if (note || levels) cells.push(h("span", { class: "int-sub", text: note ?? levels }));
+    cells.push(h("span", { class: "int-amount", text: q ? formatPrice(q.price) : "—" }));
+    rows.append(listRow(FEED_COLORS[item.provider] ?? "#8E939C", i === 0, ...cells));
+  });
+  const more = items.length > 3 ? h("span", { class: "int-total", text: `+${items.length - 3}` }) : undefined;
+  return h("div", { class: "int-card" }, header("#F5A524", t("Watchlist"), t("Prices"), more), rows);
+}
+
 // ── GitHub ────────────────────────────────────────────────────────────────────
 
 function statRow(icon: string, color: string, label: string, value: string): HTMLElement {
@@ -463,6 +500,8 @@ export function hasIntegrationData(id: string): boolean {
       return info.loaded;
     case TRADEVAULT:
       return (readSummary(get(id))?.accounts.length ?? 0) > 0;
+    case WATCHLIST:
+      return readWatchlist(State.settings.watchlist).length > 0;
     default:
       return false;
   }
@@ -504,6 +543,8 @@ export function renderIntegrationCard(task: AgentTask, hooks: IntegrationCardHoo
       return calcomCard();
     case TRADEVAULT:
       return tradevaultCard();
+    case WATCHLIST:
+      return watchlistCard();
     default:
       return idleCard(task, hooks.openSettings);
   }

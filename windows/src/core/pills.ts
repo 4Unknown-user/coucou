@@ -129,6 +129,8 @@ export const PILL_CATALOG: readonly PillDefinition[] = [
     subtitle: N_("Integration"), source: "n8n", support: "yes", connect: key("stripe-api-key") },
   { id: "integration_tradevault", name: "TradeVault", color: "#5E6AD2", category: "service",
     subtitle: N_("Integration"), source: "n8n", support: "yes", connect: key("tradevault-token") },
+  { id: "integration_watchlist", name: "Watchlist", color: "#F5A524", category: "service",
+    subtitle: N_("Integration"), source: "n8n", support: "yes", connect: none },
   { id: "integration_music", name: "Apple Music", color: "#FA2D48", category: "service",
     subtitle: N_("Integration"), source: "n8n", support: "no", connect: none },
 ];

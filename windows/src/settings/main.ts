@@ -17,6 +17,7 @@ import {
 import { h, clear } from "../views/dom";
 import { agentsSection } from "./agents";
 import { timeSection } from "./time";
+import { watchlistSection } from "./watchlist";
 import { renderDiff, statusDot } from "./parts";
 import {
   LANGUAGES, N_, isRtl, onLanguageChange, resolveLanguage, setLanguage, systemLanguages, t, tn,
@@ -1314,7 +1315,7 @@ async function render() {
   const keys = [
     "stripe-api-key", "github-token", "vercel-token",
     "n8n-url", "n8n-api-key", "resend-api-key", "notion-api-key", "calcom-api-key",
-    "tradevault-url", "tradevault-token",
+    "tradevault-url", "tradevault-token", "finnhub-api-key",
   ];
   const present: Record<string, boolean> = {};
   for (const k of keys) present[k] = (await Bridge.secretPresent(k)) ?? false;
@@ -1355,6 +1356,7 @@ async function render() {
     localSection(customKey),
     activePillsSection(connected),
     integrationsSection(present),
+    watchlistSection(() => settings, save, present["finnhub-api-key"] ?? false),
     generalSection(),
     timeSection(() => settings, save),
     shortcutsSection(shortcutReport),
