@@ -826,6 +826,71 @@ body {
 
 /* ── Settings view (in-island) ──────────────────────────────────────────── */
 
+/* ── Quick-log (views/quicklog.ts) ─────────────────────────────────────── */
+
+.ql-stack {
+  padding: 12px 16px 12px 92px;
+  justify-content: flex-start;
+  gap: 7px;
+}
+
+.ql-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ql-account {
+  margin-left: auto;
+  max-width: 200px;
+  font: 400 11.5px var(--font);
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.07);
+  border: 0;
+  border-radius: 7px;
+  padding: 3px 6px;
+}
+
+/* Two lines at most: the risk at the end of the preview must stay readable. */
+.ql-preview {
+  font: 400 11px/1.35 var(--mono);
+  color: #c5c8cd;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  min-height: 15px;
+}
+
+.ql-preview.err,
+.ql-status.err {
+  color: var(--red-text);
+}
+
+.ql-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ql-status {
+  flex: 1 1 auto;
+  min-width: 0;
+  font: 400 11px var(--font);
+  color: var(--dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ql-status.ok {
+  color: #22c55e;
+}
+
+.ql-actions .btn:disabled {
+  opacity: 0.45;
+}
+
 /* ── Time today (views/time.ts) ─────────────────────────────────────────── */
 
 .time-stack {

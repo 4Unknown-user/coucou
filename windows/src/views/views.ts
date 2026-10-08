@@ -21,6 +21,7 @@ import { Bridge } from "../core/bridge";
 import { buildRecap } from "./recap";
 import { buildWardrobe } from "./wardrobe";
 import { buildTime } from "./time";
+import { buildQuickLog } from "./quicklog";
 import type { Outfit, OutfitSelection } from "../mochi/wardrobe";
 import { language, t, tl, type Msg } from "../i18n/i18n";
 
@@ -234,6 +235,7 @@ function buildOverview(actions: ViewActions): ViewHost {
       State.notify();
     },
     openSettings: () => actions.openSettingsWindow(),
+    logTrade: () => actions.setView("quicklog"),
   };
 
   /** The countdowns move every 30 s while a card is open, and only then. */
@@ -772,6 +774,7 @@ export function buildViews(
   map.set("recap", buildRecap(actions));
   map.set("wardrobe", buildWardrobe(actions));
   map.set("time", buildTime(actions));
+  map.set("quicklog", buildQuickLog(actions));
   // Not in the Windows v1: sending a file by email, window attach + web result.
   map.set("mail", buildPlaceholder(tl("Sending by email isn't in this version."), ""));
   map.set("searching", buildPlaceholder(tl("Claude is searching…"), ""));

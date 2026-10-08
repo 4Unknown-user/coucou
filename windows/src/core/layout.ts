@@ -24,7 +24,8 @@ export type IslandViewName =
   | "greeting"
   | "recap"
   | "wardrobe"
-  | "time";
+  | "time"
+  | "quicklog";
 
 export type BotStateName =
   | "idle"
@@ -95,6 +96,7 @@ export const VIEW_LAYOUTS: Record<IslandViewName, ViewLayout> = {
   recap: { height: 184, botX: 62, botY: null, botDiameter: 58, agentMode: "column" },
   wardrobe: { height: 160, botX: 68, botY: null, botDiameter: 58, agentMode: "none" },
   time: { height: 160, botX: 54, botY: null, botDiameter: 46, agentMode: "none" },
+  quicklog: { height: 176, botX: 52, botY: null, botDiameter: 44, agentMode: "none" },
 };
 
 // The upload views above are only the fallback geometry. Once a file is actually

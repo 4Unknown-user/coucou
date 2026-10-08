@@ -20,6 +20,7 @@ mod net;
 mod openai_compat;
 mod pipe;
 mod platform;
+mod quicklog;
 mod recap;
 mod secrets;
 mod session_window;
@@ -714,6 +715,8 @@ pub fn run() {
             chat_reset,
             ingest_file,
             capture_screen,
+            quicklog::tradevault_accounts,
+            quicklog::tradevault_log_trade,
             timetrack::time_read,
             timetrack::time_save_csv,
             updater::update_check,

@@ -157,6 +157,12 @@ export const Bridge = {
   timeRead: () => call<string>("time_read"),
   /** Saves the time CSV into Downloads; returns where. */
   timeSaveCsv: (csv: string) => callOrThrow<string>("time_save_csv", { csv }),
+  /** Quick-log: the accounts a trade can go to, and whether the token may log trades. */
+  tradevaultAccounts: () =>
+    callOrThrow<{ canWrite: boolean; accounts: { id: string; name: string; currency: string }[] }>("tradevault_accounts"),
+  /** Quick-log: one trade, once per submission id. Rejects with { kind, message }. */
+  tradevaultLogTrade: (submission: string, trade: Record<string, unknown>) =>
+    callOrThrow<{ id: string; duplicate: boolean }>("tradevault_log_trade", { submission, trade }),
   /** Only ever tells you whether a key exists — never its value. */
   secretPresent: (key: string) => call<boolean>("secret_present", { key }),
   secretSet: (key: string, value: string) => callOrThrow<void>("secret_set", { key, value }),

@@ -246,7 +246,7 @@ function resendCard(): HTMLElement {
 // ── TradeVault ────────────────────────────────────────────────────────────────
 
 /** One row per account: today's P&L (signed, never colour alone), then streak and drawdown. */
-function tradevaultCard(): HTMLElement {
+function tradevaultCard(logTrade?: () => void): HTMLElement {
   const summary = readSummary(get(TRADEVAULT));
   const rows = h("div", { class: "int-rows" });
   (summary?.accounts ?? []).slice(0, 3).forEach((a, i) => {
@@ -260,7 +260,10 @@ function tradevaultCard(): HTMLElement {
     cells.push(h("span", { class: "int-amount", text: formatMoney(a.todayPnl, a.currency, true) }));
     rows.append(listRow(accent, i === 0, ...cells));
   });
-  return h("div", { class: "int-card" }, header("#5E6AD2", "TradeVault", t("Today")), rows);
+  const log = logTrade
+    ? h("button", { class: "link-btn int-log", style: "margin-left:auto;color:#5E6AD2d9", text: t("Log trade"), onclick: logTrade })
+    : undefined;
+  return h("div", { class: "int-card" }, header("#5E6AD2", "TradeVault", t("Today"), log), rows);
 }
 
 // ── Watchlist ─────────────────────────────────────────────────────────────────
@@ -479,6 +482,8 @@ export interface IntegrationCardHooks {
   openDetail(): void;
   closeDetail(): void;
   openSettings(): void;
+  /** TradeVault card: open the quick-log. */
+  logTrade?(): void;
 }
 
 /** True when this integration has data worth showing instead of the idle card. */
@@ -542,7 +547,7 @@ export function renderIntegrationCard(task: AgentTask, hooks: IntegrationCardHoo
     case "integration_calcom":
       return calcomCard();
     case TRADEVAULT:
-      return tradevaultCard();
+      return tradevaultCard(hooks.logTrade);
     case WATCHLIST:
       return watchlistCard();
     default:

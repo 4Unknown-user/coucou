@@ -47,7 +47,7 @@ fn emit(app: &AppHandle, update: IntegrationUpdate) {
     let _ = app.emit_to(WINDOW_LABEL, "integration", update);
 }
 
-fn client() -> reqwest::Client {
+pub(crate) fn client() -> reqwest::Client {
     reqwest::Client::builder()
         .timeout(TIMEOUT)
         .build()
@@ -161,19 +161,31 @@ fn status_error(code: u16, unauthorised_hint: &str) -> String {
 
 const TRADEVAULT: &str = "integration_tradevault";
 
-async fn poll_tradevault(app: AppHandle) {
+/// TradeVault's address and token, once both are set and the address may carry
+/// the token: https, or a TradeVault on this computer. Shared with quicklog.rs.
+/// None until both are set; Err with a reason the user can act on.
+pub(crate) fn tradevault_target() -> Option<Result<(reqwest::Url, String), String>> {
     let (Some(token), Some(raw)) = (secrets::get("tradevault-token"), secrets::get("tradevault-url")) else {
-        return;
+        return None;
     };
-    let fail = |error: String| IntegrationUpdate { id: TRADEVAULT, data: json!({}), error: Some(error), event: None };
     let base = match crate::net::normalise_server_url(&raw) {
         Ok(url) => url,
-        Err(e) => return emit(&app, fail(e)),
+        Err(e) => return Some(Err(e)),
     };
     // The token never travels in clear text to another machine.
     if base.scheme() != "https" && !crate::net::is_loopback_url(&base) {
-        return emit(&app, fail(crate::i18n::t("A key is only sent over https, or to a server on this computer.")));
+        return Some(Err(crate::i18n::t("A key is only sent over https, or to a server on this computer.")));
     }
+    Some(Ok((base, token)))
+}
+
+async fn poll_tradevault(app: AppHandle) {
+    let fail = |error: String| IntegrationUpdate { id: TRADEVAULT, data: json!({}), error: Some(error), event: None };
+    let (base, token) = match tradevault_target() {
+        None => return,
+        Some(Err(e)) => return emit(&app, fail(e)),
+        Some(Ok(target)) => target,
+    };
     // TradeVault may run in another time zone: "today" is ours.
     let now = crate::platform::local_time();
     let url = format!(
